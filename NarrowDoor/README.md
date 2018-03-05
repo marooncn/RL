@@ -25,21 +25,24 @@
 
 ## Run the demo by yourself
 Tested on Ubuntu 16.04 (64 bits).
-open V-REP 
+
+open V-REP<br> 
 ~~~
 # in your V-REP installation folder
 ./vrep.sh
 ~~~
-load the scene: `File -> Open Scene -> robot.ttt`  
-recommended simulation settings for V-REP scenes:
+load the scene: `File -> Open Scene -> robot.ttt` 
+
+Recommended simulation settings for V-REP scenes:
 * Simulation step time: 50 ms  (default) 
-* Real-Time Simulation: Enabled
+* Real-Time Simulation: Enabled<br>
+
 excute the learning algorithm
 ~~~
 python robot.py
 ~~~
 ## Reference
-[RL-ROBOT](https://github.com/angelmtenor/RL-ROBOT)
-[basic_reinforcement_learning](https://github.com/vmayoral/basic_reinforcement_learning)
-[Automatic-Parking](https://github.com/taochenshh/Automatic-Parking)
+[RL-ROBOT](https://github.com/angelmtenor/RL-ROBOT)<br>
+[basic_reinforcement_learning](https://github.com/vmayoral/basic_reinforcement_learning)<br>
+[Automatic-Parking](https://github.com/taochenshh/Automatic-Parking)<br>
 
