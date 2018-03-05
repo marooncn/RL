@@ -2,6 +2,7 @@
     This package uses Reinforcement Learning to train a differental drive robot with only two ultrasonic 
     sensors to go through a narrow door which is just a little wider than the robot.
     
+<img alt="Introduction" src="image/Environment.png" width="800">
 `config.py:` configuration file<br>
 `robot.py:` the main file<br>
 `vrepInterface.py:` interface file between python code and V-REP<br>
@@ -17,7 +18,9 @@
 
 `Environment：` V-REP<br>
 `State：` the data from two ultrasonic sensors<br>
-`Action：` eight valid actions(can be changed in config.py)
+`Action：` eight valid actions(can be changed in config.py)<br>
 `Reward:` get_reward function of class LearningAgent(robot.py)
+
+
 
 
