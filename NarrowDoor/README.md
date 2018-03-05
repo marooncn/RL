@@ -24,9 +24,8 @@
 `Reward:` get_reward function of class LearningAgent(robot.py)
 
 ## Run the demo by yourself
-Tested on Ubuntu 16.04 (64 bits).
-
-open V-REP<br> 
+Tested on Ubuntu 16.04 (64 bits).<br>
+1> Open V-REP 
 ~~~
 # in your V-REP installation folder
 ./vrep.sh
@@ -35,9 +34,9 @@ load the scene: `File -> Open Scene -> robot.ttt`
 
 Recommended simulation settings for V-REP scenes:
 * Simulation step time: 50 ms  (default) 
-* Real-Time Simulation: Enabled<br>
+* Real-Time Simulation: Enabled
 
-excute the learning algorithm
+2> Execute the learning algorithm
 ~~~
 python robot.py
 ~~~
@@ -45,4 +44,3 @@ python robot.py
 [RL-ROBOT](https://github.com/angelmtenor/RL-ROBOT)<br>
 [basic_reinforcement_learning](https://github.com/vmayoral/basic_reinforcement_learning)<br>
 [Automatic-Parking](https://github.com/taochenshh/Automatic-Parking)<br>
-
