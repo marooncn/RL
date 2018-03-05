@@ -1,6 +1,6 @@
 # This file is part of the REMOTE API
 # 
-# Copyright 2006-2017 Coppelia Robotics GmbH. All rights reserved. 
+# Copyright 2006-2016 Coppelia Robotics GmbH. All rights reserved. 
 # marc@coppeliarobotics.com
 # www.coppeliarobotics.com
 # 
@@ -24,29 +24,25 @@
 # along with the REMOTE API.  If not, see <http://www.gnu.org/licenses/>.
 # -------------------------------------------------------------------
 #
-# This file was automatically created for V-REP release V3.4.0 rev. 1 on April 5th 2017
+# This file was automatically created for V-REP release V3.3.2 on August 29th 2016
 
 import platform
 import struct
 import sys
-import os
 import ctypes as ct
 from vrepConst import *
 
 #load library
 libsimx = None
 try:
-    file_extension = '.so'
     if platform.system() =='cli':
-        file_extension = '.dll'
+        libsimx = ct.CDLL("./remoteApi.dll")
     elif platform.system() =='Windows':
-        file_extension = '.dll'
+        libsimx = ct.CDLL("./remoteApi.dll") 
     elif platform.system() == 'Darwin':
-        file_extension = '.dylib'
+        libsimx = ct.CDLL("./remoteApi.dylib")
     else:
-        file_extension = '.so'
-    libfullpath = os.path.join(os.path.dirname(__file__), 'remoteApi' + file_extension)
-    libsimx = ct.CDLL(libfullpath)
+        libsimx = ct.CDLL("./remoteApi.so")
 except:
     print ('----------------------------------------------------')
     print ('The remoteApi library could not be loaded. Make sure')
