@@ -6,7 +6,7 @@
 
 `config.py:` configuration file<br>
 `robot.py:` the main file<br>
-`vrepInterface.py:` interface file between python code and V-REP<br>
+`vrepInterface.py:` interface file between python code with V-REP<br>
 `sarsa.py:` SARSA algorithm<br>
 `qlearning.py:` Q-learning algorithm<br>
 `robot.ttt:` the scene to de loaded in V-REP<br>
@@ -20,9 +20,9 @@
 
 `Environment：` V-REP<br>
 `State：` the data from two ultrasonic sensors<br>
-`Action：` eight valid actions(can be changed in config.py)<br>
+`Action：` six valid actions(can be changed in config.py)<br>
 `Reward:` get_reward function of class LearningAgent(robot.py)
-
+ 
 ## Run the demo by yourself
 Tested on Ubuntu 16.04 (64 bits).<br>
 1> Open V-REP 
