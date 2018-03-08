@@ -5,8 +5,9 @@
 
 import numpy as np
 
-n_episodes = 60000
+n_episodes = 6000
 algorithm = "qlearning" # or "sarsa"
+restore = True
 alpha = 0.1
 gamma = 0.9
 epsilon = 0.4
