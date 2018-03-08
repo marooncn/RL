@@ -60,12 +60,12 @@ class LearningAgent(object):
     def train(self):
         for epi in range(self.n_episodes):
             print("Simulator.run(): Train {}".format(epi))
-            if (epi > 8000) and (epi < 15000):
+            if (epi > 800) and (epi < 1500):
                 self.ai.epsilon = 0.3
-            elif (epi > 15000) and (epi < 25000):
+            elif (epi > 1500) and (epi < 2500):
                 self.ai.epsilon = 0.2
-            elif epi > 25000:
-                self.ai.epsilon = 5000 / float(epi)
+            elif epi > 2500:
+                self.ai.epsilon = 500 / float(epi)
             vrepInterface.start()
             vrepInterface.reset()
             self.reset()
@@ -84,7 +84,7 @@ class LearningAgent(object):
 
             if epi > 0 and epi % 500 == 0:
                 print("Train {} done, saving Q table...".format(epi))
-                with open(self.data,'wb') as f:
+                with open(self.data,'ab+') as f:
                     pickle.dump(self.ai.q, f, protocol=pickle.HIGHEST_PROTOCOL)
                 print("Success: {} / {}".format(self.ok_time, self.t))
                 print("Collision: {} / {}".format(self.hit_wall_time, self.t))
@@ -159,5 +159,5 @@ class LearningAgent(object):
 
 
 if __name__ == '__main__':
-    agent = LearningAgent(restore=False)
+    agent = LearningAgent(restore=configure.restore)
     agent.run()
