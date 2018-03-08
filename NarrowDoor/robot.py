@@ -159,5 +159,5 @@ class LearningAgent(object):
 
 
 if __name__ == '__main__':
-    agent = LearningAgent(restore=configure.restore)
+    agent = LearningAgent(restore=config.restore)
     agent.run()
