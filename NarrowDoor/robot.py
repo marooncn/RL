@@ -86,10 +86,10 @@ class LearningAgent(object):
                 print("Train {} done, saving Q table...".format(epi))
                 with open(self.data,'ab+') as f:
                     pickle.dump(self.ai.q, f, protocol=pickle.HIGHEST_PROTOCOL)
-                print("Success: {} / {}".format(self.ok_time, self.t))
-                print("Collision: {} / {}".format(self.hit_wall_time, self.t))
-                print("too far: {} / {}".format(self.far_time, self.t))
-                print("Out of time: {} / {}".format(self.num_out_of_time, self.t))
+                print("Success: {} / {}".format(self.ok_time, epi))
+                print("Collision: {} / {}".format(self.hit_wall_time, epi))
+                print("too far: {} / {}".format(self.far_time, epi))
+                print("Out of time: {} / {}".format(self.num_out_of_time, epi))
 
     def reset(self):
         self.state = None
