@@ -14,6 +14,7 @@ WAIT = vrep.simx_opmode_oneshot_wait
 ONESHOT = vrep.simx_opmode_oneshot
 STREAMING = vrep.simx_opmode_streaming
 BUFFER = vrep.simx_opmode_buffer
+BLOCKING = vrep.simx_opmode_blocking
 
 
 if config.wait_response:
@@ -112,8 +113,8 @@ def setup_devices():
     # goal reference object
     res, goalID = vrep.simxGetObjectHandle(clientID, 'Dummy#', WAIT)
     # collision object
-    res, left_collisionID = vrep.simxGetCollisionHandle(clientID, "leftCollision#", vrep.simx_opmode_blocking)
-    res, right_collisionID = vrep.simxGetCollisionHandle(clientID, "rightCollision#", vrep.simx_opmode_blocking)
+    res, left_collisionID = vrep.simxGetCollisionHandle(clientID, "leftCollision#", BLOCKING)
+    res, right_collisionID = vrep.simxGetCollisionHandle(clientID, "rightCollision#", BLOCKING)
 
     # start up devices
 
@@ -126,10 +127,10 @@ def setup_devices():
 
     # reading-related function initialization according to the recommended operationMode
     for i in ultraID:
-        vrep.simxReadProximitySensor(clientID, i, vrep.simx_opmode_streaming)
-    vrep.simxReadDistance(clientID, rewardRefID, vrep.simx_opmode_streaming)
-    vrep.simxReadCollision(clientID, left_collisionID, vrep.simx_opmode_streaming)
-    vrep.simxReadCollision(clientID, right_collisionID, vrep.simx_opmode_streaming)
+        vrep.simxReadProximitySensor(clientID, i, STREAMING)
+    vrep.simxReadDistance(clientID, rewardRefID, STREAMING)
+    vrep.simxReadCollision(clientID, left_collisionID, STREAMING)
+    vrep.simxReadCollision(clientID, right_collisionID, STREAMING)
     return
 
 
@@ -155,7 +156,7 @@ def get_ultra_distance():
     global flag
     flag = 0
     for i, item in enumerate(ultraID):
-        _, state[i], detectedPoint, _, _ = vrep.simxReadProximitySensor(clientID, item,  vrep.simx_opmode_buffer)
+        _, state[i], detectedPoint, _, _ = vrep.simxReadProximitySensor(clientID, item, BUFFER)
         if state[i] == True:
             distance[i] = math.sqrt(detectedPoint[0]**2 + detectedPoint[1]**2 + detectedPoint[2]**2)
             # discretization
@@ -180,7 +181,7 @@ def move_wheels(v_left, v_right):
 def get_reward_distance():
     """ return the reference distance for reward """
     global reward_ref
-    res, reward_ref = vrep.simxReadDistance(clientID, rewardRefID, vrep.simx_opmode_buffer)
+    res, reward_ref = vrep.simxReadDistance(clientID, rewardRefID, BUFFER)
     # print(res) # [debug]
     # if res == vrep.simx_return_ok:  # [debug]
     #    print("vrep.simxReadDistance executed fine")
@@ -197,8 +198,8 @@ def stop_motion():
 
 def if_collision():
     """ judge if collision happens"""
-    res, csl = vrep.simxReadCollision(clientID, left_collisionID, vrep.simx_opmode_buffer)
-    res, csr = vrep.simxReadCollision(clientID, right_collisionID, vrep.simx_opmode_buffer)
+    res, csl = vrep.simxReadCollision(clientID, left_collisionID, BUFFER)
+    res, csr = vrep.simxReadCollision(clientID, right_collisionID, BUFFER)
     collision = 0
     if csl == 1:
         print("Collision with left wall!")
