@@ -1,7 +1,7 @@
 ## Introduction
-    This package uses Deep Reinforcement Learning(DQN) to train a differential drive robot with a kinect to follow a worker.
-    
-    
+    This package uses Deep Reinforcement Learning(DQN) to train a differential drive robot with a kinect 
+    to follow a worker.
+      
 <img alt="Introduction" src="image/DQN_Environment.png" width="800">
 
 `config.py:` configuration file<br>
