@@ -17,6 +17,9 @@ states = namedtuple('states', 'x y')
 
 class LearningAgent(object):
     def __init__(self, restore):
+        import sys
+        if sys.version_info[0] < 3:
+            sys.exit("Sorry, Python 3 required")
         self.n_episodes = config.n_episodes
         self.state = None
         self.action = None
@@ -151,11 +154,11 @@ class LearningAgent(object):
             self.far_time += 1
             self.reward = -50
         elif self.flag_prev == 0 and self.flag == 1:
-            self.reward = -50 + 100 / (10 * reward_ref + 1)
+            self.reward = -20 + 100 / (10 * reward_ref + 1)
         elif self.flag_prev == 1 and self.flag == 0:
-            self.reward = 50 + 100 / (10 * reward_ref + 1)
+            self.reward = 20 + 100 / (10 * reward_ref + 1)
         else:
-            self.reward = -20 * self.flag + 100 / (10 * reward_ref + 1)
+            self.reward = -10 * self.flag + 100 / (10 * reward_ref + 1)
 
 
 if __name__ == '__main__':
