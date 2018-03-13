@@ -16,7 +16,6 @@
 * [x] [SARSA](./sarsa.py)
 * [x] [Q-learning](./qlearning.py)
 * [ ] Policy Gradient Methods
-* [ ] Deep Q-learning<br>
 
 `Environment：` V-REP<br>
 `State：` the data from two ultrasonic sensors<br>
