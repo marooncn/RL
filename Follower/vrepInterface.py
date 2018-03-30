@@ -179,8 +179,12 @@ def move_wheels(v_left, v_right):
     vrep.simxSetJointTargetVelocity(clientID, left_motorID, v_left, STREAMING)
     vrep.simxSetJointTargetVelocity(clientID, right_motorID, v_right,
                                     STREAMING)
-    time.sleep(config.time_step)
-    return
+    depthData = []
+    for i in range(4):
+        time.sleep(config.time_step)
+        depthData1 = fetch_kinect()
+        depthData.append(depthData1)
+    return depthData
 
 
 def stop_motion():

@@ -9,6 +9,7 @@ import config
 import random
 import env
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'  # build TensorFlow from source it can be faster on your machine.
 
 
 class Qnetwork():
@@ -16,18 +17,18 @@ class Qnetwork():
         # input layer
         # The network receives a frame from V-REP, flattened into an array
         # It then resize it and process it through three convolutional layers.
-        self.scalarInput = tf.placeholder(shape=[None,4096], dtype=tf.float32)
-        self.imageIn = tf.reshape(self.scalarInput, shape=[-1,64,64])
+        self.scalarInput = tf.placeholder(shape=[None,16384], dtype=tf.float32)
+        self.imageIn = tf.reshape(self.scalarInput, shape=[-1,64,64,4])
         # hidden layer
-        self.conv1 = slim.conv2d(inputs=self.imageIn, num_outputs=32, kernel_size=8, stride=4, padding='VALID',
+        self.conv1 = slim.conv2d(inputs=self.imageIn, num_outputs=32, kernel_size=[8,8], stride=[4,4], padding='VALID',
                                  biases_initializer=None)
-        self.conv2 = slim.conv2d(inputs=self.conv1, num_outputs=64, kernel_size=4, stride=2, padding='VALID',
+        self.conv2 = slim.conv2d(inputs=self.conv1, num_outputs=64, kernel_size=[4,4], stride=[2,2], padding='VALID',
                                  biases_initializer=None)
-        self.conv3 = slim.conv2d(inputs=self.conv2, num_outputs=64, kernel_size=3, stride=1, padding='VALID',
+        self.conv3 = slim.conv2d(inputs=self.conv2, num_outputs=64, kernel_size=[3,3], stride=[1,1], padding='VALID',
                                  biases_initializer=None)
-        self.conv4 = slim.conv2d(inputs=self.conv3, num_outputs=512, kernel_size=4, stride=1, padding='VALID',
+        self.conv4 = slim.conv2d(inputs=self.conv3, num_outputs=512, kernel_size=[4,4], stride=[1,1], padding='VALID',
                                  biases_initializer=None)
-        self.streamAC, self.streamVC = tf.split(self.conv4, 2, 2)  # tf.split(input, num_split, dimension_split)
+        self.streamAC, self.streamVC = tf.split(self.conv4, 2, 3)  # tf.split(input, num_split, dimension_split)
         self.streamA = slim.flatten(self.streamAC)
         self.streamV = slim.flatten(self.streamVC)
         xavier_init = tf.contrib.layers.xavier_initializer()
@@ -35,7 +36,8 @@ class Qnetwork():
         self.VW = tf.Variable(xavier_init([256, 1]))
         self.Advantage = tf.matmul(self.streamA, self.AW)
         self.Advantage = tf.subtract(self.Advantage, tf.reduce_mean(self.Advantage, axis=1,
-                                                                    keep_dims=True))  # Advantage为action与其它action的比较值，设计为0均值
+                                                                    keep_dims=True))
+                                                                 # Advantage为action与其它action的比较值，设计为0均值
         self.Value = tf.matmul(self.streamV, self.VW)
 
         # Then combine them together to get our final Q-values.
@@ -108,7 +110,7 @@ if not os.path.exists(path):
     os.makedirs(path)
 
 
-global_step= tf.Variable(0, name='global_step', trainable=False) # 计数器变量
+global_step= tf.Variable(0, name='global_step', trainable=False)  # 计数器变量
 
 with tf.Session() as sess:
     sess.run(init)
@@ -120,13 +122,12 @@ with tf.Session() as sess:
             saver.restore(sess, ckpt.model_checkpoint_path)
 
     for i in range(num_episodes):
-        episodeBuffer = deque()
         # Reset environment and get first new observation
         s = env.start(i)
         d = False
         rAll = 0
         # The Q-Network
-        while d == False:
+        while not d:
 
             # Choose an action by greedily (with e chance of random action) from the Q-network
             if np.random.rand(1) < e or total_steps < pre_train_steps:
@@ -135,35 +136,38 @@ with tf.Session() as sess:
                a = sess.run(mainQN.predict, feed_dict={mainQN.scalarInput: [s]})[0]
             s1, r, d = env.step(config.valid_actions[a])
             total_steps += 1
-            episodeBuffer.append(np.reshape(np.array([s,a,r,s1,d]),[1,5]))  # Save the experience to our episode buffer.
-            if len(episodeBuffer) > replay_memory:
-                episodeBuffer.popleft()
+            my_buffer.append([s, a, r, s1, d])  # Save the experience to our episode buffer.
+            if len(my_buffer) > replay_memory:
+                my_buffer.popleft()
             if total_steps > pre_train_steps:
                 if e > endE:
                     e -= stepDrop
 
                 if total_steps % update_freq == 0:
                     trainBatch = random.sample(list(my_buffer), batch_size)  # Get a random batch of experiences.
+                    # print(trainBatch)
+                    state = [trainBatch[k][0] for k in range(batch_size)]
+                    action = [trainBatch[k][1] for k in range(batch_size)]
+                    reward = [trainBatch[k][2] for k in range(batch_size)]
+                    next_state = [trainBatch[k][3] for k in range(batch_size)]
+                    # print(len(np.vstack(next_state)))
                 # Below we perform the Double-DQN update to the target Q-values
-                    A = sess.run(mainQN.predict, feed_dict={mainQN.scalarInput:np.vstack(trainBatch[:, 3])})
+                    A = sess.run(mainQN.predict, feed_dict={mainQN.scalarInput:np.vstack(next_state)})
                                                   # 回放下一个状态s1传入mainQN执行predict，得到主模型选择的action
-                    Q = sess.run(targetQN.Qout, feed_dict={targetQN.scalarInput: np.vstack(trainBatch[:, 3])})
+                    Q = sess.run(targetQN.Qout, feed_dict={targetQN.scalarInput: np.vstack(next_state)})
                                                   # 回放下一个状态s1传入targetQN执行predict，得到目标模型的输出Q值
                     doubleQ = Q[range(batch_size), A] # 评估mainQN选择的action
-                    targetQ = trainBatch[:, 2] + y * doubleQ  # 回放reward加上doubleQ乘以衰减系数y得到学习目标
+                    targetQ = reward + y * doubleQ  # 回放reward加上doubleQ乘以衰减系数y得到学习目标
                 # Update the network with our target values.
-                    _ = sess.run(mainQN.updateModel,feed_dict={mainQN.scalarInput: np.vstack(trainBatch[:, 0]),
-                                                           mainQN.targetQ: targetQ, mainQN.actions: trainBatch[:, 1]})
+                    _ = sess.run(mainQN.updateModel,feed_dict={mainQN.scalarInput: np.vstack(state),
+                                                           mainQN.targetQ: targetQ, mainQN.actions: action})
 
                     updateTarget(targetOps, sess)  # Update the target network toward the primary network.
             rAll += r
             s = s1
 
-        my_buffer.append(episodeBuffer)
-        if len(my_buffer) > replay_memory:
-            my_buffer.popleft()
         rList.append(rAll)
-        global_step.assign(i).eval()  # 更新计数器
+        global_step.assign(i).eval()  # update calculator
         if i > 0 and i % 25 == 0:
             print("episode", i, ', average reward of last 25 episodes', np.mean(rList[-25]))
             # Periodically save the model.

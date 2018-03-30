@@ -12,16 +12,16 @@ def start(i):
         vrepInterface.connect()
     vrepInterface.start()
     state = vrepInterface.fetch_kinect()
-    state = np.reshape(state, [4096])
+    state = np.tile(state, 4)
+    state = np.reshape(state, [16384])
     return state
 
 
 def step(action):
     v_left = config.valid_actions_dict[action][0]
     v_right = config.valid_actions_dict[action][1]
-    vrepInterface.move_wheels(v_left, v_right)
-    next_state = vrepInterface.fetch_kinect()
-    next_state = np.reshape(next_state, [4096])
+    next_state = vrepInterface.move_wheels(v_left, v_right)
+    next_state = np.reshape(next_state, [16384])
     reward, done = get_reward()
     return next_state, reward, done
 
