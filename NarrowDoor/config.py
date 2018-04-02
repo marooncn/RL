@@ -6,11 +6,11 @@
 import numpy as np
 
 n_episodes = 6000
-algorithm = "qlearning" # or "sarsa"
 restore = True
+algorithm = "qlearning" # or "sarsa"
 alpha = 0.1
 gamma = 0.9
-epsilon = 0.4
+epsilon = 0.3
 valid_actions = ['forward', 'backward', 'turn_left', 'turn_right', 'left_forward', 'right_forward']
 speed = 0.5  # rad/s (pioneer 3dx: 0.5 rad/s: ~ 0.05m/s)
 
