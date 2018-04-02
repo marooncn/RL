@@ -37,7 +37,7 @@ Recommended simulation settings for V-REP scenes:
 
 2> Execute the learning algorithm
 ~~~
-python robot.py
+python3 robot.py
 ~~~
 ## Reference
 [RL-ROBOT](https://github.com/angelmtenor/RL-ROBOT)<br>
