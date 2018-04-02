@@ -20,6 +20,7 @@ class LearningAgent(object):
         import sys
         if sys.version_info[0] < 3:
             sys.exit("Sorry, Python 3 required")
+
         self.n_episodes = config.n_episodes
         self.state = None
         self.action = None
@@ -48,8 +49,8 @@ class LearningAgent(object):
             if os.path.exists(self.data):
                 print('restoring trained data from {}'.format(data_path))
                 with open(self.data, 'rb') as f:
-                    self.Q_values = pickle.load(f)
-                    print('trainedData length:', len(self.Q_values))
+                    self.ai.q = pickle.load(f)
+                    print('trainedData length:', len(self.ai.q))
                     print('restoring done ...')
 
     def run(self):
@@ -64,11 +65,11 @@ class LearningAgent(object):
         for epi in range(self.n_episodes):
             print("Simulator.run(): Train {}".format(epi))
             if (epi > 800) and (epi < 1500):
-                self.ai.epsilon = 0.3
-            elif (epi > 1500) and (epi < 2500):
                 self.ai.epsilon = 0.2
+            elif (epi > 1500) and (epi < 2500):
+                self.ai.epsilon = 0.1
             elif epi > 2500:
-                self.ai.epsilon = 500 / float(epi)
+                self.ai.epsilon = 250 / float(epi)
             vrepInterface.start()
             vrepInterface.reset()
             self.reset()
