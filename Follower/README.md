@@ -13,7 +13,8 @@
 
 ## Reinforcement Learning
 * [x] [DQN](./DQN.py)
-
+* [ ] Imitation Learning
+* [ ] Application
 
 `Environment：` V-REP<br>
 `State：` the depth image from kinect <br>
