@@ -15,15 +15,15 @@
 ## Reinforcement Learning
 * [x] [SARSA](./sarsa.py)
 * [x] [Q-learning](./qlearning.py)
-* [ ] Policy Gradient Methods
+* [x] [Policy Gradient Methods](./policyGradient.py)
 
 `Environment：` V-REP<br>
 `State：` the data from two ultrasonic sensors<br>
-`Action：` six valid actions(can be changed in config.py)<br>
+`Action：` four valid actions(can be changed in config.py)<br>
 `Reward:` get_reward function of class LearningAgent(robot.py)
  
 ## Run the demo by yourself
-Tested on Ubuntu 16.04 (64 bits).<br>
+Tested on Ubuntu 16.04 (64 bits) and V-REP PRO EDU 3.4.0. <br>
 1> Open V-REP 
 ~~~
 # in your V-REP installation folder
@@ -43,3 +43,4 @@ python3 robot.py
 [RL-ROBOT](https://github.com/angelmtenor/RL-ROBOT)<br>
 [basic_reinforcement_learning](https://github.com/vmayoral/basic_reinforcement_learning)<br>
 [Automatic-Parking](https://github.com/taochenshh/Automatic-Parking)<br>
+[Policy Gradient](https://github.com/keon/policy-gradient)
