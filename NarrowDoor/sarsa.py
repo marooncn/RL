@@ -34,7 +34,7 @@ class RL:
                 i = q.index(maxQ)
 
             action = self.actions[i]
-        return action
+        return action, None
 
     # after choosing action, the agent needs to interact with the environment to get reward and the new state
     # and SARSA also needs to get the new action, then it can update Q value
