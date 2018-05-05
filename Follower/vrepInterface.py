@@ -32,7 +32,7 @@ right_motorID = -1
 collisionID = -1
 clientID = -1
 
-robot_pos = np.full(3, -1, dtype = np.float64)  # Robot pose in the world coordination: x(m), y(m), theta(rad)
+pos_absolute = np.full(3, -1, dtype = np.float64)  # Robot pose in the world coordination: x(m), y(m), theta(rad)
 pos_relative = np.full(3, -1, dtype = np.float64)  # People pose relative to robot: x(m), y(m), theta(rad)
 
 
@@ -89,6 +89,10 @@ def stop():
     vrep.simxStopSimulation(clientID, ONESHOT)
     time.sleep(0.5)
 
+def pause():
+    """ pause the simulation """
+    vrep.simxPauseSimulation(clientID, ONESHOT)
+    time.sleep(0.5)
 
 def setup_devices():
     """ Assign the devices from the simulator to specific IDs """
@@ -132,11 +136,11 @@ def fetch_kinect():
 
 def get_robot_pose2d():
     """ return the pose of the robot relative to world coordination:  [ x(m), y(m), Theta(rad) ] """
-    global robot_pos
+    global pos_absolute
     res, pos = vrep.simxGetObjectPosition(clientID, robotID, -1, MODE)
     res, ori = vrep.simxGetObjectOrientation(clientID, robotID, -1, MODE)
     pos_absolute = np.array([pos[0], pos[1], ori[2]])
-    return robot_pos
+    return pos_absolute
 
 
 def get_relative_pose2d():
@@ -165,13 +169,13 @@ def if_in_range():
     if distance > 3.5 or distance < 0.01:
         print("Distance is out of range!")
         out_flag = 1
-    pos2 = get_robot_pose2d()
+    # pos2 = get_robot_pose2d()
     angle = np.arctan2(pos1[1], pos1[0])
-    angle = angle/np.pi*180
-    if angle < (-28.5+pos2[2]) or angle > (28.5+pos2[2]):
+    # print(angle*180/math.pi)
+    if angle < -28.5*np.pi/180 or angle > 28.5*np.pi/180:
         print("Angle is out of range!")
         out_flag = 1
-    return distance, out_flag
+    return distance, out_flag, angle
 
 
 def move_wheels(v_left, v_right):

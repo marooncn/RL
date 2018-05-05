@@ -33,10 +33,47 @@ def get_reward():
         done = True
         reward = -500
         return reward, done
-    distance, out_flag = vrepInterface.if_in_range()
+    distance, out_flag, _ = vrepInterface.if_in_range()
     if out_flag == 1:
         done = True
         reward = -100
         return reward, done
     reward = 10/(2*np.abs(distance-config.best_distance)+1)
     return reward, done
+
+
+def auto_move():  
+    dis, _, ang = vrepInterface.if_in_range() # dis(m), ang(rad)
+    print(dis, 180*ang/np.pi)
+    if dis < 2:
+       if np.abs(ang) < 15*np.pi/180:
+           a = 1 # backward
+       elif ang > 15*np.pi/180:
+           a = 2 # left_forward
+       else:
+           a = 3 # right_forward
+       
+    elif dis > 2.5:
+       if np.abs(ang) < 18*np.pi/180:
+           a = 0 # forward
+       elif ang > 18*np.pi/180:
+           a = 2 # left_forward
+       else:
+           a = 3 # right_forward
+    elif ang > 10*np.pi/180:
+       a = 2 # left_forward
+    elif ang < -10*np.pi/180:
+       a = 3 # right_forward
+    else:
+       a = 4
+    print("action", a)
+    return a
+
+
+def startPause():
+    vrepInterface.pause()
+
+def endPause():
+    vrepInterface.start()
+
+
