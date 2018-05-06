@@ -22,7 +22,7 @@
 `Reward:` get_reward function (env.py)
  
 ## Run the demo by yourself
-Tested on Ubuntu 16.04 (64 bits) and V-REP 3.5.0.<br>
+Tested on Ubuntu 16.04 (64 bits) and V-REP PRO EDU 3.4.0.<br>
 1> Open V-REP 
 ~~~
 # in your V-REP installation folder
