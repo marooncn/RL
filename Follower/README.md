@@ -13,7 +13,7 @@
 
 ## Reinforcement Learning
 * [x] [DQN](./DQN.py)
-* [x] Imitation Learning
+* [x] [Imitation Learning](./imitationLearning.py)
 * [ ] Continous Space
 
 `Environment：` V-REP<br>
