@@ -137,8 +137,29 @@ if not os.path.exists(path):
     os.makedirs(path)
 
 
-global_step= tf.Variable(0, name='global_step', trainable=False)  # 计数器变量
+global_step = tf.Variable(0, name='global_step', trainable=False)  # 计数器变量
 
+
+def update_network(sess, my_buffer):
+	trainBatch = random.sample(list(my_buffer), batch_size)  # Get a random batch of experiences.
+	# print(trainBatch)
+	state = [trainBatch[k][0] for k in range(batch_size)]
+	action = [trainBatch[k][1] for k in range(batch_size)]
+	reward = [trainBatch[k][2] for k in range(batch_size)]
+	next_state = [trainBatch[k][3] for k in range(batch_size)]
+	# print(len(np.vstack(next_state)))
+	# Below we perform the Double-DQN update to the target Q-values
+	A = sess.run(mainQN.predict, feed_dict={mainQN.scalarInput:np.vstack(next_state)})
+		                      # 回放下一个状态s1传入mainQN执行predict，得到主模型选择的action
+	Q = sess.run(targetQN.Qout, feed_dict={targetQN.scalarInput: np.vstack(next_state)})
+		                      # 回放下一个状态s1传入targetQN执行predict，得到目标模型的输出Q值
+	doubleQ = Q[range(batch_size), A] # 评估mainQN选择的action
+	targetQ = reward + y * doubleQ  # 回放reward加上doubleQ乘以衰减系数y得到学习目标
+	# Update the network with our target values.
+	_ = sess.run(mainQN.updateModel,feed_dict={mainQN.scalarInput: np.vstack(state),
+		                               mainQN.targetQ: targetQ, mainQN.actions: action})
+
+	updateTarget(targetOps, sess)  # Update the target network toward the primary network.
 
 if __name__ == '__main__':
     with tf.Session() as sess:
@@ -157,14 +178,11 @@ if __name__ == '__main__':
             rAll = 0
             # The Q-Network
             while not d:
-                if config.imitation_learning:
-		    a = env.auto_move();                   
-                else:
-                    # Choose an action by greedily (with e chance of random action) from the Q-network
-                    if np.random.rand(1) < e or total_steps < pre_train_steps:
-                       a = np.random.randint(0, len(config.valid_actions))
-                    else:
-                       a = sess.run(mainQN.predict, feed_dict={mainQN.scalarInput: [s]})[0]
+            # Choose an action by greedily (with e chance of random action) from the Q-network
+	        if np.random.rand(1) < e or total_steps < pre_train_steps:
+	            a = np.random.randint(0, len(config.valid_actions))
+	        else:
+	            a = sess.run(mainQN.predict, feed_dict={mainQN.scalarInput: [s]})[0]
                 s1, r, d = env.step(config.valid_actions[a])
                 total_steps += 1
                 my_buffer.append([s, a, r, s1, d])  # Save the experience to our episode buffer.
@@ -175,34 +193,17 @@ if __name__ == '__main__':
                         e -= stepDrop
 
                     if total_steps % update_freq == 0:
-                        trainBatch = random.sample(list(my_buffer), batch_size)  # Get a random batch of experiences.
-                        # print(trainBatch)
-                        state = [trainBatch[k][0] for k in range(batch_size)]
-                        action = [trainBatch[k][1] for k in range(batch_size)]
-                        reward = [trainBatch[k][2] for k in range(batch_size)]
-                        next_state = [trainBatch[k][3] for k in range(batch_size)]
-                        # print(len(np.vstack(next_state)))
-                    # Below we perform the Double-DQN update to the target Q-values
-                        A = sess.run(mainQN.predict, feed_dict={mainQN.scalarInput:np.vstack(next_state)})
-                                                      # 回放下一个状态s1传入mainQN执行predict，得到主模型选择的action
-                        Q = sess.run(targetQN.Qout, feed_dict={targetQN.scalarInput: np.vstack(next_state)})
-                                                      # 回放下一个状态s1传入targetQN执行predict，得到目标模型的输出Q值
-                        doubleQ = Q[range(batch_size), A] # 评估mainQN选择的action
-                        targetQ = reward + y * doubleQ  # 回放reward加上doubleQ乘以衰减系数y得到学习目标
-                    # Update the network with our target values.
-                        _ = sess.run(mainQN.updateModel,feed_dict={mainQN.scalarInput: np.vstack(state),
-                                                               mainQN.targetQ: targetQ, mainQN.actions: action})
-
-                        updateTarget(targetOps, sess)  # Update the target network toward the primary network.
-                rAll += r
+			update_network(sess, my_buffer)
                 s = s1
+                rAll += r
+
 
             rList.append(rAll)
             global_step.assign(i).eval()  # update calculator
             if i > 0 and i % 25 == 0:
                 print("episode", i, ', average reward of last 25 episodes', np.mean(rList[-25]))
                 # Periodically save the model.
-            if i > 0 and i % 1000 == 0:
+            if (i > 0 and i % 200 == 0) or (total_steps % 10000 == 0):
                 saver.save(sess, path + '/model-' + str(i) + '.ckpt', global_step=global_step)
                 print("Saved Model")
         saver.save(sess, path + '/model-' + str(i) + '.ckpt', global_step=global_step)
