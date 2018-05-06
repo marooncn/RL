@@ -18,11 +18,11 @@
 
 `Environment：` V-REP<br>
 `State：` the depth image from kinect <br>
-`Action：` six valid actions(can be changed in config.py)<br>
+`Action：` five valid actions(can be changed in config.py)<br>
 `Reward:` get_reward function (env.py)
  
 ## Run the demo by yourself
-Tested on Ubuntu 16.04 (64 bits).<br>
+Tested on Ubuntu 16.04 (64 bits) and V-REP 3.5.0.<br>
 1> Open V-REP 
 ~~~
 # in your V-REP installation folder
