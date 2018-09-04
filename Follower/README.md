@@ -13,7 +13,7 @@
 
 ## Reinforcement Learning
 * [x] [DQN](./DQN.py)
-* [ ] [DDPG]
+* [ ] DDPG
 
 `Environment：` V-REP<br>
 `State：` the depth image from kinect <br>
