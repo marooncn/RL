@@ -174,7 +174,7 @@ def move_wheels(v_left, v_right):
     vrep.simxSetJointTargetVelocity(clientID, left_motorID, v_left, STREAMING)
     vrep.simxSetJointTargetVelocity(clientID, right_motorID, v_right,
                                     STREAMING)
-    time.sleep(config.time_step)
+    # time.sleep(config.time_step)
     return
 
 
