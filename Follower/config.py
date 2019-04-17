@@ -30,7 +30,7 @@ max_epLength = 50         # The max allowed length of our episode.
 tau = 0.001               # Rate to update target network toward primary network
 replay_memory = 50000
 
-time_step = 0.2
+time_step = 0.05
 best_distance = 3.5/2
 
 il_steps = 1000000   # total imitation learning step
