@@ -22,5 +22,5 @@ valid_actions_dict = {valid_actions[0]: np.array([speed, speed]),
                       valid_actions[2]: np.array([0, speed]),
                       valid_actions[3]: np.array([speed, 0])}
 tolerance = 0.01
-time_step = 1
+time_step = 0.05
 grid_width = 0.002
